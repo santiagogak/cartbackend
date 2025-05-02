@@ -6,7 +6,7 @@ class ProductManager {
     }
 
     //Método para agregar un producto
-    addProduct(title, description, price, thumbnail, code, stock) {
+    addProduct({title, description, price, thumbnail, code, stock}) {
         //Validar que estén todos los campos necesarios
         if (!title || !description || !price || !thumbnail || !code || !stock) {
             console.log("Todos los campos son obligatorios");
@@ -42,10 +42,10 @@ class ProductManager {
         const product = this.products.find((p) => p.id === id);
         if (!product) {
             console.log(`Producto con id ${id} no encontrado`);
-            return;
+            return {};
         }
         return product;
     }
 }
 
-module.export = ProductManager;
+module.exports = ProductManager;
