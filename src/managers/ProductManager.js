@@ -1,7 +1,7 @@
 const { readProducts, writeProducts } = require('../utils/fileHandler.js');
 
 class ProductManager {
-
+    
     //Constructor de la clase
     constructor() {
         this.products = [];
@@ -53,7 +53,7 @@ class ProductManager {
         const product = this.products.find((p) => p.id === id);
         if (!product) {
             console.log(`Producto con id ${id} no encontrado`);
-            return {};
+            return;
         }
         return product;
     }
