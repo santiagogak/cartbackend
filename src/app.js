@@ -9,8 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 const ProductManager = require('./managers/ProductManager.js');
 const pmanager = new ProductManager();
 
-console.log(pmanager.currentId)
-
 //Traigo la clase CartManager para gestionar los carritos de compra
 const CartManager = require('./managers/CartManager.js');
 const cmanager = new CartManager();
