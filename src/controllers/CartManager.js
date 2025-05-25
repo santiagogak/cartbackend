@@ -1,4 +1,4 @@
-const { readCarts, writeCarts } = require('../utils/fileHandler.js');
+const { readCarts, writeCarts } = require('../services/fileHandler.js');
 
 class CartManager {
 

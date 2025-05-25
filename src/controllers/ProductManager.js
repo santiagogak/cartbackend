@@ -1,4 +1,4 @@
-const { readProducts, writeProducts } = require('../utils/fileHandler.js');
+const { readProducts, writeProducts } = require('../services/fileHandler.js');
 
 class ProductManager {
     

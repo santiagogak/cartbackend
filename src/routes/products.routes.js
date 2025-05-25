@@ -7,7 +7,7 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 //Traigo la clase ProductManager para gestionar la lista de productos
-const ProductManager = require('../managers/ProductManager.js');
+const ProductManager = require('../controllers/ProductManager.js');
 const pmanager = new ProductManager();
 
 //:::::::::::::: PRODUCTS ::::::::::::::://

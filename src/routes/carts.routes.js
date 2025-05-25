@@ -7,11 +7,11 @@ router.use(express.urlencoded({ extended: true }));
 
 
 //Traigo la clase ProductManager para gestionar la lista de productos
-const ProductManager = require('../managers/ProductManager.js');
+const ProductManager = require('../controllers/ProductManager.js');
 const pmanager = new ProductManager();
 
 //Traigo la clase CartManager para gestionar los carritos de compra
-const CartManager = require('../managers/CartManager.js');
+const CartManager = require('../controllers/CartManager.js');
 const cmanager = new CartManager();
 
 

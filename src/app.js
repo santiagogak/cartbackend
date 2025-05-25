@@ -3,20 +3,32 @@ const express = require('express');
 const app = express();
 const routes = require('./routes/index.js');
 
+const path = require('path');
+const handlebars = require('express-handlebars');
+
+
+//Set handlebars
+app.engine('hbs', handlebars.engine({
+  extname: '.hbs',
+  defaultLayout: 'main'
+}));
+
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+
+//Set static
+app.use('/public',express.static(path.join(__dirname, 'public')));
+
 //Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//Routes
-app.get('/', (req, res) => {
-    res.status(200).json({ success: true, message: "Main page" });
-});
-
-app.use('/api', routes);
+//Views
+app.use('/', routes);
 
 //NOT FOUND
 app.use((req, res) => {
-  res.status(404).send("Not Found")
+  res.render('pages/notfound', {})
 });
 
 module.exports = app;
