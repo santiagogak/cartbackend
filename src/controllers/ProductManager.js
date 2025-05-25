@@ -1,7 +1,7 @@
 const { readProducts, writeProducts } = require('../services/fileHandler.js');
 
 class ProductManager {
-    
+
     //Constructor de la clase
     constructor() {
         this.products = [];
@@ -93,7 +93,7 @@ class ProductManager {
         }
         return updatedProduct;
     }
-    
+
     //Método para borrar un producto
     async removeProduct(id) {
         //Hacer nueva lista de producto sin el producto con id
@@ -105,7 +105,7 @@ class ProductManager {
                 return p;
             }
         });
-        
+
         if (isID) {
             try {
                 await writeProducts(result);

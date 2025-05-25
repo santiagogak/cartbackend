@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 
+const { getIO } = require('../sockets/socket.js');
+
 //Middleware
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -37,6 +39,8 @@ router.post('/', async (req, res) => {
   try {
     const addedProduct = await pmanager.addProduct(req.body);
     if (addedProduct) {
+      const io = getIO();
+      io.emit('actualizarProductos', pmanager.getProducts());
       res.status(201).json({ success: true, product: addedProduct });
     } else {
       res.status(400).json({ success: false, message: 'No se pudo agregar el producto.' });
@@ -53,6 +57,8 @@ router.put('/', async (req, res) => {
     const { id } = req.query;
     const updatedProduct = await pmanager.updateProduct(id, req.body);
     if (updatedProduct) {
+      const io = getIO();
+      io.emit('actualizarProductos', pmanager.getProducts());
       res.status(201).json({ success: true, product: updatedProduct });
     } else {
       res.status(400).json({ success: false, message: 'No se pudo actualizar el producto.' });
@@ -69,6 +75,8 @@ router.delete('/', async (req, res) => {
     const { id } = req.query;
     const removedProduct = await pmanager.removeProduct(id);
     if (removedProduct) {
+      const io = getIO();
+      io.emit('actualizarProductos', pmanager.getProducts());
       res.status(200).json({ success: true, message: `Producto con ID ${id} eliminado` });
     } else {
       res.status(400).json({ success: false, message: `Producto con ID ${id} a eliminar no está en el listado de productos` });

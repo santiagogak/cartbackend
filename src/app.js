@@ -7,10 +7,12 @@ const path = require('path');
 const handlebars = require('express-handlebars');
 
 
+
 //Set handlebars
 app.engine('hbs', handlebars.engine({
   extname: '.hbs',
-  defaultLayout: 'main'
+  defaultLayout: 'main',
+  partialsDir: path.join(__dirname, 'views', 'partials')
 }));
 
 app.set('view engine', 'hbs');
