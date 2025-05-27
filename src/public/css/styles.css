@@ -8,12 +8,12 @@
     background-color: rgb(104, 177, 153);
     margin: 0 auto;
     width: 70%;
-    text-align: center;
     padding: 20px;
 }
 
 h1 {
     padding: 25px;
+    text-align: center;
 }
 
 .product-form {
@@ -27,10 +27,49 @@ h1 {
 
 .product-form input, .product-form button {
     width: 50%;
+    padding: 10px;
+    margin: 5px;
+}
+
+.product-form button {
+    display: block;
+    color: whitesmoke;
+    background-color: rgb(13, 41, 125);
+    padding: 10px;
+    margin: 15px auto;
+    border-radius: 15px;
+    font-size: 16px;
 }
 
 .product-list {
     display: grid;
     grid-template-columns: repeat(2,1fr);
     gap: 15px;
+}
+
+.product-box {
+    border: 3px solid grey;
+    background-color: whitesmoke;
+    border-radius: 15px;
+    font-size: 18px;
+    padding: 20px;
+}
+
+.product-box h2 {
+    margin: 15px auto;
+    text-align: center;
+}
+
+.product-box p {
+    margin-bottom: 5px;
+}
+
+.delete-button {
+    display: block;
+    color: whitesmoke;
+    background-color: rgb(125, 13, 13);
+    padding: 10px;
+    margin: 15px auto;
+    border-radius: 15px;
+    font-size: 16px;
 }

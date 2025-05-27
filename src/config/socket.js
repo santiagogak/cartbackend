@@ -1,7 +1,7 @@
 const { Server } = require('socket.io');
 
 //Traigo la clase ProductManager para gestionar la lista de productos
-const ProductManager = require('../controllers/ProductManager.js');
+const ProductManager = require('../managers/ProductManager.js');
 const pmanager = new ProductManager();
 
 let io;

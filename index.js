@@ -1,6 +1,6 @@
 const app = require('./src/app.js');
 const http = require('http');
-const { configureSockets } = require('./src/sockets/socket.js');
+const { configureSockets } = require('./src/config/socket.js');
 const PORT = 8080
 
 //Se crea el servidor http

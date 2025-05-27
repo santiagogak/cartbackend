@@ -1,7 +1,7 @@
 //Importo express para gestionar mi servidor
 const express = require('express');
 const router = express.Router();
-const ProductManager = require('../controllers/ProductManager.js');
+const ProductManager = require('../managers/ProductManager.js');
 const pmanager = new ProductManager();
 
 //Middleware
