@@ -8,21 +8,31 @@ const pmanager = new ProductManager();
 
 //GET Products
 const getProductsController = async (req, res) => {
-  const products = await pmanager.getProducts();
-  if (products.length > 0) {
-    res.status(200).json({ success: true, message: "Print producto", products: products });
-  } else {
-    res.status(404).json({success: false, message: "No hay productos"});
+  try {
+    const products = await pmanager.getProducts();
+    if (products.length > 0) {
+      res.status(200).json({ success: true, message: "Print producto", products: products });
+    } else {
+      res.status(404).json({ success: false, message: "No hay productos" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: error });
   }
 };
 
 //GET Products por ID
 const getProductByIdController = async (req, res) => {
-  const product = await pmanager.getProductById(req.params.id);
-  if (product) {
-    res.status(200).json({ success: true, message: `Print producto ${req.params.id}`, product: product });
-  } else {
-    res.status(404).json({success: false, message: `No hay producto con ID ${req.params.id}`});
+  try {
+    const product = await pmanager.getProductById(req.params.id);
+    if (product) {
+      res.status(200).json({ success: true, message: `Print producto ${req.params.id}`, product: product });
+    } else {
+      res.status(404).json({ success: false, message: `No hay producto con ID ${req.params.id}` });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: error });
   }
 };
 

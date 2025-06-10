@@ -1,33 +1,39 @@
 const socket = io();
 
 // Enviar nuevo producto
-document.getElementById('formProducto').addEventListener('submit', e => {
-    e.preventDefault();
-    const title = e.target.title.value;
-    const description = e.target.description.value;
-    const code = e.target.code.value;
-    const price = e.target.price.value;
-    const stock = e.target.stock.value;
+const form = document.getElementById('formProducto');
+if (form) {
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const title = e.target.title.value;
+        const description = e.target.description.value;
+        const code = e.target.code.value;
+        const price = e.target.price.value;
+        const stock = e.target.stock.value;
 
-    socket.emit('nuevoProducto', {
-        title,
-        description,
-        code,
-        stock,
-        thumbnail: 'placeholder',
-        price
+        socket.emit('nuevoProducto', {
+            title,
+            description,
+            code,
+            stock,
+            thumbnail: 'placeholder',
+            price
+        });
+
+        e.target.reset();
     });
-
-    e.target.reset();
-});
+}
 
 // Eliminar producto
-document.getElementById('listaProductos').addEventListener('click', e => {
-    if (e.target.tagName === 'BUTTON') {
-        const id = e.target.id;
-        socket.emit('eliminarProducto', id);
-    }
-});
+const productlist = document.getElementById('listaProductos')
+if (productlist) {
+    productlist.addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON') {
+            const id = e.target.id;
+            socket.emit('eliminarProducto', id);
+        }
+    });
+}
 
 // Recibir productos actualizados
 socket.on('actualizarProductos', productos => {
