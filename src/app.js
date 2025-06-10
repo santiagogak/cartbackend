@@ -2,11 +2,16 @@
 const express = require('express');
 const app = express();
 const routes = require('./routes/index.js');
-
+const mongoose = require('mongoose');
+require('dotenv').config();
+const MONGO_URI = process.env.MONGO_URI;
 const path = require('path');
 const handlebars = require('express-handlebars');
 
-
+//Connexión a BD MongoDB Atlas
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('Conectado a MongoDB Atlas'))
+  .catch(err => console.error('No se pudo  conectar a MongoDB Atlas', err));
 
 //Set handlebars
 app.engine('hbs', handlebars.engine({

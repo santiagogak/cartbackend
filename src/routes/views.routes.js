@@ -11,14 +11,14 @@ router.use(express.urlencoded({ extended: true }));
 //:::::::::::::: VIEWS ::::::::::::::://
 
 //home
-router.get('/', (req, res) => {
-    const products = pmanager.getProducts();
+router.get('/', async (req, res) => {
+    const products = await pmanager.getProducts();
     res.render('pages/home',{ products: products });
 });
 
 //realtimeproducts
-router.get('/realtimeproducts', (req, res) => {
-    const products = pmanager.getProducts();
+router.get('/realtimeproducts', async (req, res) => {
+    const products = await pmanager.getProducts();
     res.render('pages/realTimeProducts',{ products: products });
 });
 

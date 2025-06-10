@@ -8,9 +8,9 @@ const cmanager = new CartManager();
 
 
 //GET Carts
-const getCartsController = (req, res) => {
-  const carts = cmanager.getCarts();
-  if (carts.length > 0) {
+const getCartsController = async (req, res) => {
+  const carts = await cmanager.getCarts();
+  if (carts) {
     res.status(200).json({ success: true, message: "Print Carritos", carts: carts });
   } else {
     res.status(404).json({success: false, message: "No hay carritos"});
@@ -18,8 +18,8 @@ const getCartsController = (req, res) => {
 };
 
 //GET Carts por ID
-const getCartByIdController = (req, res) => {
-  const cart = cmanager.getCartById(parseInt(req.params.id));
+const getCartByIdController = async (req, res) => {
+  const cart = await cmanager.getCartById(req.params.id);
   if (cart) {
     res.status(200).json({ success: true, message: `Print carrito ${req.params.id}`, cart: cart });
   } else {
@@ -46,8 +46,8 @@ const addCartController =  async (req, res) => {
 const addProductToCartController = async (req, res) => {
   const { cid, pid } = req.params;
   try {
-    const cart = await cmanager.getCartById(parseInt(cid));
-    const product = await pmanager.getProductById(parseInt(pid));
+    const cart = await cmanager.getCartById(cid);
+    const product = await pmanager.getProductById(pid);
     if (cart) {
       if (product) {
         const addedCart = await cmanager.addProductToCart(cid, pid);

@@ -43,7 +43,7 @@ socket.on('actualizarProductos', productos => {
                 <p>Price: $${p.price}</p>
                 <p>Code: ${p.code}</p>
                 <p>Stock: ${p.stock}</p>
-                <button id="${p.id}">Delete</button>
+                <button class="delete-button" id="${p._id}">Delete</button>
                 `;
         lista.appendChild(li);
     });

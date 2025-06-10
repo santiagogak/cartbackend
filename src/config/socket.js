@@ -14,22 +14,19 @@ const configureSockets = ( server ) => {
 
         //Crear un nuevo producto por socket
         socket.on('nuevoProducto', async (data) => {
-            console.log(data);
             const addedProduct = await pmanager.addProduct(data);
-            console.log(addedProduct)
-            io.emit('actualizarProductos', pmanager.getProducts());
+            const products = await pmanager.getProducts();
+            io.emit('actualizarProductos', products);
         });
 
         //Eliminar un producto por socket
         socket.on('eliminarProducto', async (id) => {
-            console.log(id);
             const deletedProduct = await pmanager.removeProduct(id);
-            console.log(deletedProduct);
-            io.emit('actualizarProductos', pmanager.getProducts());
+            const products = await pmanager.getProducts();
+            io.emit('actualizarProductos', products);
         });
 
         socket.on('disconnect', (data) => {
-            console.log(data);
             console.log(`Usuario desconectado con ID: ${socket.id}`);
         });
     })

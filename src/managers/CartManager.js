@@ -1,91 +1,78 @@
-const { readCarts, writeCarts } = require('../services/fileHandler.js');
+const Cart = require('../models/carts.model.js');
+const mongoose = require('mongoose');
 
 class CartManager {
 
     //Constructor de la clase
     constructor() {
-        this.carts = [];
-        this.currentId = 0;
-        this.getCartsFromDB();
+        this.getCarts();
     }
 
     //Método para agregar un carrito
     async addCart(products = []) {
         const newCart = {
-            id: this.currentId++,
             products: products
         };
-        this.carts.push(newCart);
         try {
-            await writeCarts(this.carts);
-            console.log("Carrito agregado:", newCart);
+            const cart = new Cart({ products: products });
+            await cart.save();
+            console.log("Carrito agregado:", cart);
+            return cart;
         } catch (error) {
-            this.carts.pop();
-            this.currentId--;
             console.log("Error al agregar el carrito:", error);
+            return null;
         }
-        return newCart;
     }
 
     //Método para agregar un producto al carrito
     async addProductToCart(cid, pid) {
-        const cartIdx = this.carts.findIndex((c) => c.id == cid);
-        if (cartIdx == -1) {
-            console.log(`Carrito con id ${cid} no encontrado`);
-            return;
-        }
-        const productIndex = this.carts[cartIdx].products.findIndex((p) => p.id == pid);
-        if (productIndex == -1) {
-            this.carts[cartIdx].products.push({ id: parseInt(pid), quantity: 1 });
-        } else {
-            this.carts[cartIdx].products[productIndex].quantity++;
-        }
         try {
-            await writeCarts(this.carts);
-            console.log(`Producto ${pid} agregado al carrito ${cid}`);
-        } catch (error) {
-            if (productIndex == -1) {
-                this.carts[cartIdx].products.pop();
+            const cart = await this.getCartById(cid);
+            const products = cart.products || [];
+            const product = products.find((p) => p._id == pid);
+            let updatedCart;
+            if (product) {
+                updatedCart = await Cart.findByIdAndUpdate(cid, { $set: { 'products.$[elem].quantity': product.quantity + 1 } }, { arrayFilters: [{ 'elem._id': pid }], new: true });
             } else {
-                this.carts[cartIdx].products[productIndex].quantity--;
+                updatedCart = await Cart.findByIdAndUpdate(cid, { $push: { products: { _id: pid, quantity: 1 } } }, { new: true });
             }
+            console.log(`Producto ${pid} agregado al carrito ${cid}`);
+            return updatedCart;
+        } catch (error) {
             console.log("Error al agregar el carrito:", error);
+            return [];
         }
-        return this.carts[cartIdx];
     }
 
     //Método para obtener todos los carritos
-    getCarts() {
-        return this.carts;
-    }
-
-    //Método para obtener un carrito por su ID
-    getCartById(id) {
-        const cart = this.carts.find((c) => c.id === id);
-        if (!cart) {
-            console.log(`Carrito con id ${id} no encontrado`);
-            return;
-        }
-        return cart;
-    }
-
-    //Guardo los carritos de mi DB en el manager
-    async getCartsFromDB() {
+    async getCarts() {
         try {
-            const data = await readCarts();
+            const data = await Cart.find({}, "products").lean();
             if (data.length > 0) {
-                data.forEach(element => {
-                    this.carts.push(element);
-                    if (element.id >= this.currentId) {
-                        this.currentId = element.id + 1;
-                    }
-                });
+                return data;
+            } else {
+                return null;
             }
         } catch (error) {
             console.log("Error leyendo archivo de DB:", error);
+            return null;
         }
     }
 
+    //Método para obtener un carrito por su ID
+    async getCartById(id) {
+        try {
+            const cart = await Cart.findById(id).lean();
+            if (!cart) {
+                console.log(`Carrito con id ${id} no encontrado`);
+                return null;
+            }
+            return cart;
+        } catch (error) {
+            console.log("Error al obtener el carrito:", error);
+            return null;
+        }
+    }
 }
 
 module.exports = CartManager;
