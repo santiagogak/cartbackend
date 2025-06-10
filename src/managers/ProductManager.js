@@ -31,67 +31,36 @@ class ProductManager {
     }
 
     //Método para obtener todos los productos
-    async getProducts({ limit = 10, page = 1, sort, query } = {}) {
+    async getProducts({ limit = 10, page = 1, sort, query } = {}, baseUrl = '') {
         try {
-            const matchStage = query
-            ? {
-                $match: {
-                    $or: [
-                        { title: { $regex: query, $options: "i" } },
-                        { description: { $regex: query, $options: "i" } },
-                        { code: { $regex: query, $options: "i" } },
-                    ],
-                },
+
+            const options = {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                sort: sort ? { price: sort == 'asc'? 1 : -1} : {_id: 1},
+                lean: true
             }
-            : { $match: {} };
             
-            const sortStage = sort === "asc"
-            ? { $sort: { price: 1 } }
-            : sort === "desc"
-            ? { $sort: { price: -1 } }
-            : { $sort: { _id: 1 } };
-            
-            const skipStage = { $skip: (Number(page) - 1) * Number(limit) };
-            const limitStage = { $limit: Number(limit) };
-            
-            const projectionStage = {
-                $project: {
-                    title: 1,
-                    description: 1,
-                    price: 1,
-                    thumbnail: 1,
-                    code: 1,
-                    stock: 1,
-                },
-            };
-            const pipeline = [
-                matchStage,
-                sortStage,
-                skipStage,
-                limitStage,
-                projectionStage,
-            ];
-            
-            const products = await Product.aggregate(pipeline);
-            // Obtener total de documentos que coinciden con el filtro
-            const totalDocs = await Product.aggregate([
-                matchStage,
-                { $count: "total" },
-            ]);
-            
-            const totalCount = totalDocs[0]?.total || 0;
-            const totalPages = Math.ceil(totalCount / limit);
+            const results = await Product.paginate({}, options);
+
+            const sortString = sort ? `sort=${sort}` : '';
+            const queryString = query ? `query=${query}` : '';
+            let fullUrl = baseUrl+'/?';
+            fullUrl += queryString ? `${queryString}` : '';
+            fullUrl += sortString ? `${queryString ? '&' : ''}${sortString}&` : '';
 
             return {
-                payload: products,
-                totalDocs: totalCount,
-                totalPages,
-                page: Number(page),
-                limit: Number(limit),
-                hasPrevPage: page > 1,
-                hasNextPage: page < totalPages,
-                prevPage: page > 1 ? page - 1 : null,
-                nextPage: page < totalPages ? page + 1 : null,
+                payload: results.docs,
+                totalDocs: results.totalDocs,
+                totalPages: results.totalPages,
+                page: results.page,
+                limit: results.limit,
+                hasPrevPage: results.hasPrevPage,
+                hasNextPage: results.hasNextPage,
+                prevPage: results.prevPage,
+                nextPage: results.nextPage,
+                prevLink: results.hasPrevPage ? `${fullUrl}limit=${results.limit}&page=${results.prevPage}` : null,
+                nextLink: results.hasNextPage ? `${fullUrl}limit=${results.limit}&page=${results.nextPage}` : null
             };
 
         } catch (error) {

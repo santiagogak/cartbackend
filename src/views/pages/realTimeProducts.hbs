@@ -21,4 +21,12 @@
         </div>
         {{/each}}
     </div>
+    <div class="buttons-for-pages">
+        {{#if prevLink}}
+            <a class="button prev-page" href={{prevLink}}><</a>
+        {{/if}}
+        {{#if nextLink}}
+            <a class="button next-page" href={{nextLink}}>></a>
+        {{/if}}
+    </div>
 </div>

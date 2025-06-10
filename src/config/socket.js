@@ -16,14 +16,14 @@ const configureSockets = ( server ) => {
         socket.on('nuevoProducto', async (data) => {
             const addedProduct = await pmanager.addProduct(data);
             const products = await pmanager.getProducts();
-            io.emit('actualizarProductos', products);
+            io.emit('actualizarProductos', products.payload);
         });
 
         //Eliminar un producto por socket
         socket.on('eliminarProducto', async (id) => {
             const deletedProduct = await pmanager.removeProduct(id);
             const products = await pmanager.getProducts();
-            io.emit('actualizarProductos', products);
+            io.emit('actualizarProductos', products.payload);
         });
 
         socket.on('disconnect', (data) => {

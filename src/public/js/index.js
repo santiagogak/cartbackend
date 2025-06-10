@@ -35,6 +35,30 @@ if (productlist) {
     });
 }
 
+// Agregar o eliminar producto del carrito
+const productlistHome = document.getElementById('listaProductosHome')
+if (productlistHome) {
+    productlistHome.addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON') {
+            const cid = '6847721fb3013e2bf2deab0f';
+            const pid = e.target.name;
+            const type = e.target.className;
+            if (type === 'add-prod') {
+                // Enviar solicitud para agregar producto al carrito
+                const response = fetch(`http://localhost:8080/api/cart/${cid}/product/${pid}`, {
+                        method: "POST"
+                    });
+            }
+            if (type === 'rem-prod') {
+                // Enviar solicitud para eliminar producto del carrito
+                const response = fetch(`http://localhost:8080/api/cart/${cid}/product/${pid}`, {
+                        method: "DELETE"
+                    });
+            }
+        }
+    });
+}
+
 // Recibir productos actualizados
 socket.on('actualizarProductos', productos => {
     const lista = document.getElementById('listaProductos');
