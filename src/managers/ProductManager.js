@@ -10,7 +10,7 @@ class ProductManager {
 
     //Método para agregar un producto
     async addProduct(newProduct) {
-        
+
         const { title, description, price, thumbnail, code, stock } = newProduct;
 
         //Validar que estén todos los campos necesarios
@@ -31,14 +31,69 @@ class ProductManager {
     }
 
     //Método para obtener todos los productos
-    async getProducts() {
+    async getProducts({ limit = 10, page = 1, sort, query } = {}) {
         try {
-            const data = await Product.find({}, "title description price thumbnail code stock").lean();
-            if (data.length > 0) {
-                return data;
-            } else {
-                return [];
+            const matchStage = query
+            ? {
+                $match: {
+                    $or: [
+                        { title: { $regex: query, $options: "i" } },
+                        { description: { $regex: query, $options: "i" } },
+                        { code: { $regex: query, $options: "i" } },
+                    ],
+                },
             }
+            : { $match: {} };
+            
+            const sortStage = sort === "asc"
+            ? { $sort: { price: 1 } }
+            : sort === "desc"
+            ? { $sort: { price: -1 } }
+            : { $sort: { _id: 1 } };
+            
+            const skipStage = { $skip: (Number(page) - 1) * Number(limit) };
+            const limitStage = { $limit: Number(limit) };
+            
+            const projectionStage = {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    price: 1,
+                    thumbnail: 1,
+                    code: 1,
+                    stock: 1,
+                },
+            };
+            const pipeline = [
+                matchStage,
+                sortStage,
+                skipStage,
+                limitStage,
+                projectionStage,
+            ];
+            
+            const products = await Product.aggregate(pipeline);
+            // Obtener total de documentos que coinciden con el filtro
+            const totalDocs = await Product.aggregate([
+                matchStage,
+                { $count: "total" },
+            ]);
+            
+            const totalCount = totalDocs[0]?.total || 0;
+            const totalPages = Math.ceil(totalCount / limit);
+
+            return {
+                payload: products,
+                totalDocs: totalCount,
+                totalPages,
+                page: Number(page),
+                limit: Number(limit),
+                hasPrevPage: page > 1,
+                hasNextPage: page < totalPages,
+                prevPage: page > 1 ? page - 1 : null,
+                nextPage: page < totalPages ? page + 1 : null,
+            };
+
         } catch (error) {
             console.log("Error leyendo archivo de DB:", error);
             return [];

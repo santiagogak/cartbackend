@@ -10,9 +10,6 @@ class CartManager {
 
     //Método para agregar un carrito
     async addCart(products = []) {
-        const newCart = {
-            products: products
-        };
         try {
             const cart = new Cart({ products: products });
             await cart.save();
@@ -29,14 +26,14 @@ class CartManager {
         try {
             const cart = await this.getCartById(cid);
             const products = cart.products || [];
-            const product = products.find((p) => p._id == pid);
+            const product = products.find((p) => p.product._id == pid);
             let updatedCart;
             if (product) {
                 const q = quantity || product.quantity + 1;
-                updatedCart = await Cart.findByIdAndUpdate(cid, { $set: { 'products.$[elem].quantity': q } }, { arrayFilters: [{ 'elem._id': pid }], new: true });
+                updatedCart = await Cart.findByIdAndUpdate(cid, { $set: { 'products.$[elem].quantity': q } }, { arrayFilters: [{ 'elem.product': pid }], new: true });
             } else {
                 const q = quantity || 1;
-                updatedCart = await Cart.findByIdAndUpdate(cid, { $push: { products: { _id: pid, quantity: q } } }, { new: true });
+                updatedCart = await Cart.findByIdAndUpdate(cid, { $push: { products: { product: pid, quantity: q } } }, { new: true });
             }
             console.log(`Producto ${pid} agregado al carrito ${cid}`);
             return updatedCart;
@@ -55,11 +52,11 @@ class CartManager {
                 return null;
             }
             const updatedProducts = products.map((product) => {
-                const existingProduct = cart.products.find((p) => p._id == product._id);
+                const existingProduct = cart.products.find((p) => p.product._id == product._id);
                 if (existingProduct) {
-                    return { _id: product._id, quantity: product.quantity || existingProduct.quantity };
+                    return { product: product._id, quantity: product.quantity || existingProduct.quantity };
                 } else {
-                    return { _id: product._id, quantity: product.quantity || 1 };
+                    return { product: product._id, quantity: product.quantity || 1 };
                 }
             });
             const updatedCart = await Cart.findByIdAndUpdate(cid, { $set: { products: updatedProducts } }, { new: true });
@@ -119,10 +116,10 @@ class CartManager {
         try {
             const cart = await this.getCartById(cid);
             const products = cart.products || [];
-            const product = products.find((p) => p._id == pid);
+            const product = products.find((p) => p.product._id == pid);
             let updatedCart;
             if (product) {
-                updatedCart = await Cart.findByIdAndUpdate(cid, { $pull: { products: { _id: pid } } }, { new: true });
+                updatedCart = await Cart.findByIdAndUpdate(cid, { $pull: { products: { product: pid } } }, { new: true });
             } else {
                 console.log(`Producto ${pid} no encontrado en el carrito ${cid}`);
                 return false;

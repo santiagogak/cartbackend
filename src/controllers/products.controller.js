@@ -9,9 +9,9 @@ const pmanager = new ProductManager();
 //GET Products
 const getProductsController = async (req, res) => {
   try {
-    const products = await pmanager.getProducts();
-    if (products.length > 0) {
-      res.status(200).json({ success: true, message: "Print producto", products: products });
+    const products = await pmanager.getProducts(req.query);
+    if (products && products.totalDocs > 0) {
+      res.status(200).json({ success: true, message: "Print producto", ...products });
     } else {
       res.status(404).json({ success: false, message: "No hay productos" });
     }
