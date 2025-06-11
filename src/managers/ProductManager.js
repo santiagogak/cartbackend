@@ -11,10 +11,10 @@ class ProductManager {
     //Método para agregar un producto
     async addProduct(newProduct) {
 
-        const { title, description, price, thumbnail, code, stock } = newProduct;
+        const { title, description, category, price, thumbnail, code, stock } = newProduct;
 
         //Validar que estén todos los campos necesarios
-        if (!title || !description || !price || !thumbnail || !code || !stock) {
+        if (!title || !description || !category || !price || !thumbnail || !code || !stock) {
             console.log("Todos los campos son obligatorios");
             return null;
         }
@@ -41,13 +41,15 @@ class ProductManager {
                 lean: true
             }
             
-            const results = await Product.paginate({}, options);
+            const queryFilter = query ? { category: query } : {};
+
+            const results = await Product.paginate(queryFilter, options);
 
             const sortString = sort ? `sort=${sort}` : '';
             const queryString = query ? `query=${query}` : '';
             let fullUrl = baseUrl+'/?';
-            fullUrl += queryString ? `${queryString}` : '';
-            fullUrl += sortString ? `${queryString ? '&' : ''}${sortString}&` : '';
+            fullUrl += queryString ? `${queryString}&` : '';
+            fullUrl += sortString ? `${sortString}&` : '';
 
             return {
                 payload: results.docs,
@@ -87,10 +89,10 @@ class ProductManager {
     //Actualizar producto
     async updateProduct(pid, productData) {
 
-        const { title, description, price, thumbnail, code, stock } = productData;
+        const { title, description, category, price, thumbnail, code, stock } = productData;
 
         //Validar que esté alguno de los campos necesarios
-        if (!title && !description && !price && !thumbnail && !code && !stock) {
+        if (!title && !description && !category && !price && !thumbnail && !code && !stock) {
             console.log("La variable que deseas modificar no está en el listado de productos");
             return null;
         }

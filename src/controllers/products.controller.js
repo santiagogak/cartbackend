@@ -43,7 +43,7 @@ const addProductController = async (req, res) => {
     const products = await pmanager.getProducts();
     if (addedProduct) {
       const io = getIO();
-      io.emit('actualizarProductos', products);
+      io.emit('actualizarProductos', products.payload);
       res.status(201).json({ success: true, product: addedProduct });
     } else {
       res.status(400).json({ success: false, message: 'No se pudo agregar el producto.' });
@@ -62,7 +62,7 @@ const updateProductController = async (req, res) => {
     const products = await pmanager.getProducts();
     if (updatedProduct) {
       const io = getIO();
-      io.emit('actualizarProductos', products);
+      io.emit('actualizarProductos', products.payload);
       res.status(201).json({ success: true, product: updatedProduct });
     } else {
       res.status(400).json({ success: false, message: 'No se pudo actualizar el producto.' });
@@ -81,7 +81,7 @@ const removeProductController = async (req, res) => {
     const products = await pmanager.getProducts();
     if (removedProduct) {
       const io = getIO();
-      io.emit('actualizarProductos', products);
+      io.emit('actualizarProductos', products.payload);
       res.status(200).json({ success: true, message: `Producto con ID ${id} eliminado` });
     } else {
       res.status(400).json({ success: false, message: `Producto con ID ${id} a eliminar no está en el listado de productos` });

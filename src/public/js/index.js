@@ -7,6 +7,7 @@ if (form) {
         e.preventDefault();
         const title = e.target.title.value;
         const description = e.target.description.value;
+        const category = e.target.category.value;
         const code = e.target.code.value;
         const price = e.target.price.value;
         const stock = e.target.stock.value;
@@ -14,6 +15,7 @@ if (form) {
         socket.emit('nuevoProducto', {
             title,
             description,
+            category,
             code,
             stock,
             thumbnail: 'placeholder',
@@ -36,11 +38,12 @@ if (productlist) {
 }
 
 // Agregar o eliminar producto del carrito
-const productlistHome = document.getElementById('listaProductosHome')
+const productlistHome = document.getElementById('listaProductosHome');
+const cartId = document.getElementsByClassName('cart-link')[0]?.id || null;
 if (productlistHome) {
     productlistHome.addEventListener('click', e => {
-        if (e.target.tagName === 'BUTTON') {
-            const cid = '6847721fb3013e2bf2deab0f';
+        if (e.target.tagName === 'BUTTON' && cartId) {
+            const cid = cartId;
             const pid = e.target.name;
             const type = e.target.className;
             if (type === 'add-prod') {
@@ -70,6 +73,7 @@ socket.on('actualizarProductos', productos => {
         li.innerHTML = `
                 <h2>${p.title}</h2>
                 <p>Description: ${p.description}</p>
+                <p>Category: $${p.category}</p>
                 <p>Price: $${p.price}</p>
                 <p>Code: ${p.code}</p>
                 <p>Stock: ${p.stock}</p>
